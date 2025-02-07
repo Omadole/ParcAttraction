@@ -34,8 +34,6 @@ def get_visible_attraction():
     
     return json
 
-
-
 def get_attraction(id):
     if (not id):
         return False
@@ -53,4 +51,37 @@ def delete_attraction(id):
 
     req.delete_from_db("DELETE FROM attraction WHERE attraction_id = ?", (id,))
 
+    return True
+
+
+def associate(data):
+    if("attraction_id" in data and data['attraction_id'] == None):
+        return False
+    if("review_id" in data and data['review_id'] == None):
+        return False
+    
+    # Vérifiez si la critique est déjà associé existe déjà
+    check_requete = "SELECT 1 FROM attraction_review WHERE review_id = ?;"
+    result = req.select_from_db(check_requete, (data["review_id"],))
+    if result:
+        return False
+
+    requete = "INSERT INTO attraction_review (attraction_id, review_id) VALUES (?, ?);"
+    id = req.insert_in_db(requete, (data["attraction_id"], data["review_id"]))
+    return True
+
+def dissociate(data):
+    if("attraction_id" in data and data['attraction_id'] == None):
+        return False
+    if("review_id" in data and data['review_id'] == None):
+        return False
+    
+    # Vérifiez si la critique est déjà associé existe déjà
+    check_requete = "SELECT 1 FROM attraction_review WHERE attraction_id = ? and review_id = ?;"
+    result = req.select_from_db(check_requete, (data["attraction_id"], data["review_id"]))
+    if not result:
+        return False
+    
+    requete = "DELETE FROM attraction_review WHERE attraction_id = ? and review_id = ?"
+    req.delete_from_db(requete, (data["attraction_id"], data["review_id"]))
     return True

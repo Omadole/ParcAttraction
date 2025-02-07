@@ -64,6 +64,36 @@ def deleteAttraction(index):
         return "Element supprimé.", 200
     return jsonify({"message": "Erreur lors de la suppression."}), 500
 
+@app.post('/attraction/associate_review')
+def addReviewToAttraction():
+    print("okok", flush=True)
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if (checkToken != True):
+        return checkToken
+    
+    json = request.get_json()
+    retour = attraction.associate(json)
+
+    if (retour):
+        return jsonify({"message": "Element ajouté.", "result": retour}), 200
+    return jsonify({"message": "Erreur lors de l'ajout.", "result": retour}), 500
+
+@app.delete('/attraction/dissociate_review')
+def deleteReviewToAttraction():
+    print("okok", flush=True)
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if (checkToken != True):
+        return checkToken
+    
+    json = request.get_json()
+    retour = attraction.dissociate(json)
+
+    if (retour):
+        return jsonify({"message": "Element supprimé.", "result": retour}), 200
+    return jsonify({"message": "Erreur lors de la suppression.", "result": retour}), 500
+
 
 # Review
 @app.post('/review')
