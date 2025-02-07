@@ -4,6 +4,7 @@ from flask_cors import CORS
 import request.request as req
 import controller.auth.auth as user
 import controller.attraction as attraction
+import controller.review as review
 
 app = Flask(__name__)
 CORS(app)
@@ -11,6 +12,7 @@ CORS(app)
 @app.route('/')
 def hello_world():
     return 'Hello, Docker!'
+
 
 # Attraction
 @app.post('/attraction')
@@ -29,6 +31,12 @@ def addAttraction():
 
 @app.get('/attraction')
 def getAllAttraction():
+    
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if(checkToken != True):
+      return checkToken
+    
     result = attraction.get_all_attraction()
     return result, 200
 
@@ -36,8 +44,6 @@ def getAllAttraction():
 def getVisibleAttraction():
     result = attraction.get_visible_attraction()
     return result, 200
-
-
 
 @app.get('/attraction/<int:index>')
 def getAttraction(index):
@@ -54,6 +60,47 @@ def deleteAttraction(index):
 
     json = request.get_json()
     
+    if (attraction.delete_attraction(index)):
+        return "Element supprimé.", 200
+    return jsonify({"message": "Erreur lors de la suppression."}), 500
+
+
+# Review
+@app.post('/review')
+def addReview():
+    print("okok", flush=True)
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if (checkToken != True):
+        return checkToken
+
+    json = request.get_json()
+    retour = review.add_review(json)
+    if (retour):
+        return jsonify({"message": "Element ajouté.", "result": retour}), 200
+    return jsonify({"message": "Erreur lors de l'ajout.", "result": retour}), 500
+
+@app.get('/review')
+def getAllReview():
+    
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if(checkToken != True):
+      return checkToken
+    
+    result = review.get_all_review()
+    return result, 200
+
+@app.delete('/review/<int:index>')
+def deleteReview(index):
+    
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if(checkToken != True):
+      return checkToken
+    
+    json = request.get_json()
+
     if (attraction.delete_attraction(index)):
         return "Element supprimé.", 200
     return jsonify({"message": "Erreur lors de la suppression."}), 500
