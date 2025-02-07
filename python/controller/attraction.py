@@ -53,17 +53,28 @@ def delete_attraction(id):
 
     return True
 
-
 def associate(data):
     if("attraction_id" in data and data['attraction_id'] == None):
         return False
     if("review_id" in data and data['review_id'] == None):
         return False
     
-    # Vérifiez si la critique est déjà associé existe déjà
+    # Vérifiez si la critique est déjà associé 
     check_requete = "SELECT 1 FROM attraction_review WHERE review_id = ?;"
     result = req.select_from_db(check_requete, (data["review_id"],))
     if result:
+        return False
+    
+    # Vérifiez si l'attraction existe
+    check_requete_attraction = "SELECT 1 FROM attraction WHERE attraction_id = ?;"
+    result_attraction = req.select_from_db(check_requete_attraction, (data["attraction_id"],))
+    if result_attraction:
+        return False
+    
+    # Vérifiez si la critique existe
+    check_requete_review = "SELECT 1 FROM attraction WHERE review_id = ?;"
+    result_review = req.select_from_db(check_requete_review, (data["review_id"],))
+    if result_review:
         return False
 
     requete = "INSERT INTO attraction_review (attraction_id, review_id) VALUES (?, ?);"
@@ -85,3 +96,14 @@ def dissociate(data):
     requete = "DELETE FROM attraction_review WHERE attraction_id = ? and review_id = ?"
     req.delete_from_db(requete, (data["attraction_id"], data["review_id"]))
     return True
+
+def getReviewFromAttraction(id):
+    if (not id):
+        return False
+    
+    json = req.select_from_db("SELECT review.review_id, review.author_lastname, review.author_firstname, review.text, review.score FROM review INNER JOIN attraction_review ON review.review_id = attraction_review.review_id WHERE attraction_review.attraction_id = ?", (id,))
+
+    if len(json) > 0:
+        return json
+    else:
+        return []

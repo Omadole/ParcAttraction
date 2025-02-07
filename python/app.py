@@ -79,6 +79,11 @@ def addReviewToAttraction():
         return jsonify({"message": "Element ajouté.", "result": retour}), 200
     return jsonify({"message": "Erreur lors de l'ajout.", "result": retour}), 500
 
+@app.get('/attraction/associate_review/<int:index>')
+def getReviewAssociate(index):
+    result = attraction.getReviewFromAttraction(index)
+    return result, 200
+
 @app.delete('/attraction/dissociate_review')
 def deleteReviewToAttraction():
     print("okok", flush=True)
@@ -93,6 +98,8 @@ def deleteReviewToAttraction():
     if (retour):
         return jsonify({"message": "Element supprimé.", "result": retour}), 200
     return jsonify({"message": "Erreur lors de la suppression.", "result": retour}), 500
+
+
 
 
 # Review
