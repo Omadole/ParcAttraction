@@ -3,6 +3,7 @@ import { Observable, map } from 'rxjs';
 import { DataService } from './data.service';
 import { AttractionInterface } from '../Interface/attraction.interface';
 import { MessageInterface } from '../Interface/message.interface';
+import { ReviewInterface } from '../Interface/review.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,6 @@ export class AttractionService {
     const data = this.dataService.getData(url);
     return data as Observable<AttractionInterface[]>;
   }
-
 
 
   public postAttraction(attraction: AttractionInterface): Observable<MessageInterface> {

@@ -47,6 +47,11 @@ def getVisibleAttraction():
 
 @app.get('/attraction/<int:index>')
 def getAttraction(index):
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if (checkToken != True):
+        return checkToken
+
     result = attraction.get_attraction(index)
     return result, 200
 
@@ -81,6 +86,11 @@ def addReviewToAttraction():
 
 @app.get('/attraction/associate_review/<int:index>')
 def getReviewAssociate(index):
+    # Fonction vérif token
+    checkToken = user.check_token(request)
+    if (checkToken != True):
+        return checkToken
+
     result = attraction.getReviewFromAttraction(index)
     return result, 200
 

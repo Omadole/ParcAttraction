@@ -31,7 +31,11 @@ def get_all_attraction():
 
 def get_visible_attraction():
     json = req.select_from_db("SELECT * FROM attraction WHERE visible=1")
-    
+
+    for i in range(0, len(json)):
+        json[i]['reviews'] = req.select_from_db('SELECT r.* FROM review r INNER JOIN attraction_review ar  ON ar.review_id = r.review_id WHERE ar.attraction_id = ?', (json[i]['attraction_id'],))
+       
+
     return json
 
 def get_attraction(id):
